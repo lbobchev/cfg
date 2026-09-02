@@ -98,6 +98,7 @@ link() { # <target> <link-path>
 }
 link "$CFG_DIR/nvim" "$NVIM_CONFIG"
 link "$CFG_DIR/tmux/.tmux.conf" "$HOME/.tmux.conf"
+link "$CFG_DIR/claude/CLAUDE.md" "$HOME/.claude/CLAUDE.md"
 
 if ! grep -q "cfg/bash/.bashrc" "$HOME/.bashrc" 2>/dev/null; then
   printf '\n# fzf supplement from cfg repo\n[ -f %s/bash/.bashrc ] && source %s/bash/.bashrc\n' "$CFG_DIR" "$CFG_DIR" >> "$HOME/.bashrc"
