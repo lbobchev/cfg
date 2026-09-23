@@ -37,7 +37,10 @@ lua/lbobc/
     ├── rust.lua               -- rust_analyzer
     ├── typescript.lua        -- ts_ls (also serves React .jsx/.tsx)
     ├── angular.lua           -- angularls (ngserver)
-    └── html.lua              -- html + cssls (CSS/SCSS/LESS)
+    ├── html.lua              -- html + cssls (CSS/SCSS/LESS)
+    ├── yaml.lua              -- yamlls
+    ├── bicep.lua             -- bicep
+    └── terraform.lua         -- terraformls
 ```
 
 `init.lua` sets `<Space>` as both leader and local-leader **before** lazy loads (so plugin
@@ -80,7 +83,8 @@ in `lazy-lock.json`. Each plugin lives in its own spec file under `lua/lbobc/plu
 Defined in `plugins/lsp.lua` via `mason-tool-installer` (`run_on_start = true`):
 
 - **LSP servers:** `roslyn`, `clangd`, `gopls`, `rust-analyzer`, `typescript-language-server`,
-  `angular-language-server`, `html-lsp`, `css-lsp`
+  `angular-language-server`, `html-lsp`, `css-lsp`, `yaml-language-server`, `bicep-lsp`,
+  `terraform-ls`
 - **Formatters:** `csharpier`, `prettierd`, `prettier`, `goimports`
 - `clang-format` is expected on `$PATH` (installed via the system package manager, not Mason).
 - `netcoredbg` (the .NET debug adapter) is resolved from Mason's install if present, otherwise
@@ -107,6 +111,9 @@ from `lsp/shared.lua`.
 | Angular | angularls (ngserver) | `typescript`, `html`, `typescriptreact`, `htmlangular` | Probes project `node_modules`, reads `@angular/core` version; roots on `angular.json`/`nx.json` |
 | HTML | html | `html`, `htmlangular` | Embedded CSS/JS support |
 | CSS | cssls | `css`, `scss`, `less` | Validation enabled |
+| YAML | yamlls | `yaml` | Applies SchemaStore schemas by file name, for example `azure-pipelines.yml` and `docker-compose.yml` |
+| Bicep | bicep | `bicep`, `bicep-params` | Runs on the .NET 10 runtime; formats on save through the server |
+| Terraform | terraformls | `terraform`, `terraform-vars` | `.tf` always maps to `terraform`. Formatting needs the `terraform` CLI; without it, the server does not format |
 
 `shared.lua` also includes a `mason_bin()` helper that resolves a Mason `bin/<tool>` shim to
 its realpath, working around the relative-path lookup used by node-based shims.
@@ -115,13 +122,14 @@ its realpath, working around the relative-path lookup used by node-based shims.
 
 ## Treesitter
 
-Parsers ensured on startup (`treesitter.lua`), with highlighting, indentation, and
-`auto_install` enabled:
+Parsers ensured on startup (`treesitter.lua`). A `FileType` autocmd starts highlighting
+for every buffer that has a parser:
 
 `c_sharp`, `c`, `go`, `python`, `rust`, `lua`, `angular`, `typescript`, `tsx`,
-`javascript`, `html`, `css`, `scss`
+`javascript`, `html`, `css`, `scss`, `markdown`, `markdown_inline`, `yaml`, `bicep`,
+`terraform`, `hcl`
 
-Pinned to the `master` branch (classic API), since the `main` rewrite changes `setup()`.
+`.bicepparam` files use the `bicep` parser. The plugin tracks the `main` branch (the new API).
 
 ---
 

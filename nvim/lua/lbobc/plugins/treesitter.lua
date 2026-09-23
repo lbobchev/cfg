@@ -9,7 +9,10 @@ return {
       "c_sharp", "c", "go", "python", "rust", "lua",
       "angular", "typescript", "tsx", "javascript", "html", "css", "scss",
       "markdown", "markdown_inline",
+      "yaml", "bicep", "terraform", "hcl",
     }
+    -- .bicepparam files use the bicep grammar.
+    vim.treesitter.language.register("bicep", "bicep-params")
     local installed = require("nvim-treesitter.config").get_installed()
     local to_install = vim.tbl_filter(function(lang)
       return not vim.list_contains(installed, lang)

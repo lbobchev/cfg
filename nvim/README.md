@@ -3,7 +3,7 @@
 ## Summary
 
 A Neovim configuration focused on **C# / .NET** development, with first-class support
-for **C, Go, Rust, JavaScript/TypeScript, React, Angular and HTML/CSS**. Plugins are managed
+for **C, Go, Rust, JavaScript/TypeScript, React, Angular, HTML/CSS, YAML, Bicep and Terraform**. Plugins are managed
 by [**lazy.nvim**](https://github.com/folke/lazy.nvim) and LSP is wired through Neovim's
 native `vim.lsp` API (no `nvim-lspconfig` needed).
 
@@ -37,7 +37,10 @@ nvim/
         ├── rust.lua          # rust_analyzer
         ├── typescript.lua    # ts_ls — JavaScript, TypeScript and React (.jsx/.tsx)
         ├── angular.lua       # angularls (ngserver)
-        └── html.lua          # html + cssls (HTML / CSS / SCSS / LESS)
+        ├── html.lua          # html + cssls (HTML / CSS / SCSS / LESS)
+        ├── yaml.lua          # yamlls (schemas from SchemaStore)
+        ├── bicep.lua         # bicep (.bicep / .bicepparam)
+        └── terraform.lua     # terraformls (.tf / .tfvars)
 ```
 
 > **React** has no dedicated language server: `.jsx`/`.tsx` are served by `ts_ls`
@@ -54,12 +57,13 @@ but several of those build against tools that must already be on the host:
 | **git**                 | lazy.nvim bootstrap + plugin installs                   |
 | **A C/C++ compiler** (`build-essential`) | compiling Treesitter parsers           |
 | **ripgrep**             | Telescope live grep / fuzzy find                        |
-| **.NET 10 SDK**         | Roslyn (the C# server now targets .NET 10)              |
-| **Node.js + npm**       | ts_ls, angularls, html/css servers, prettier(d)         |
+| **.NET 10 SDK**         | Roslyn and the Bicep server (both target .NET 10)       |
+| **Node.js + npm**       | ts_ls, angularls, html/css/yaml servers, prettier(d)    |
 | **Go toolchain**        | building/running `gopls`                                |
 | **clang + clang-format**| C language server + C formatting                        |
 | **rustup** (rust-analyzer, rustfmt) | Rust language server + Rust formatting       |
 | **python3**             | some Mason packages                                     |
+| **Terraform CLI** (optional) | Terraform formatting (terraform-ls calls `terraform fmt`) |
 
 ## Installation (Debian / Linux)
 
@@ -102,7 +106,8 @@ but several of those build against tools that must already be on the host:
    - lazy.nvim bootstraps itself and installs every plugin.
 - `mason-tool-installer` auto-installs the servers/formatters on startup:
       `roslyn`, `clangd`, `gopls`, `rust-analyzer`, `typescript-language-server`,
-      `angular-language-server`, `html-lsp`, `css-lsp`, `csharpier`, `prettierd`, `prettier`.
+      `angular-language-server`, `html-lsp`, `css-lsp`, `yaml-language-server`, `bicep-lsp`,
+      `terraform-ls`, `csharpier`, `prettierd`, `prettier`.
    - Treesitter compiles its parsers (needs the C compiler from step 2).
 
    Watch progress with `:Lazy` and `:Mason`. Give it a minute on the first run.

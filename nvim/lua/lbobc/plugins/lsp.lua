@@ -28,6 +28,9 @@ return {
         "angular-language-server",
         "html-lsp",
         "css-lsp",
+        "yaml-language-server",
+        "bicep-lsp",
+        "terraform-ls",
         -- Formatters
         "csharpier",
         "prettierd",
