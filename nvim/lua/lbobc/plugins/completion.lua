@@ -11,6 +11,34 @@ return {
   config = function()
     local cmp = require("cmp")
 
+    -- nvim-cmp draws its documentation window with the deprecated
+    -- vim.lsp.util.stylize_markdown. That function decodes some HTML entities,
+    -- but its table has no `&nbsp;` entry. The Roslyn language server
+    -- separates the parameter names in a C# doc comment with `&nbsp;`, so the
+    -- window shows the literal text "&nbsp;". This wrapper replaces the entity
+    -- with a space before nvim-cmp fills the window.
+    --
+    -- The wrapper changes the entity only. It keeps the backslash that Roslyn
+    -- puts before a punctuation mark. A backslash protects the character from
+    -- the markdown syntax, and this window renders markdown with Vim syntax
+    -- rules. An underscore in an identifier becomes italic text if the
+    -- backslash goes away.
+    --
+    -- The hover float needs no wrapper. Neovim conceals `&nbsp;` there with a
+    -- treesitter query. See lua/lbobc/plugins/render-markdown.lua.
+    local entry = require("cmp.entry")
+    local get_documentation = entry.get_documentation
+    entry.get_documentation = function(self)
+      local lines = get_documentation(self)
+      if type(lines) ~= "table" then
+        return lines
+      end
+      for i, line in ipairs(lines) do
+        lines[i] = (line:gsub("&nbsp;", " "))
+      end
+      return lines
+    end
+
     cmp.setup({
       snippet = {
         -- REQUIRED if using snippets
