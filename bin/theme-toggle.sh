@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # theme-toggle -- cycle the cfg dev stack between the two health-oriented
 # palettes: "dark" (soft neutral-gray; easy in a dim room) and "light"
-# (Solarized Light warm paper; easy in a bright room / daytime). Both are
+# (Modus Operandi Tinted warm paper; easy in a bright room / daytime). Both are
 # plugin-free / import-free; this script just repoints symlinks and re-applies
 # a few live colours. Bound to Ctrl+Shift+B (alacritty bindings-*.toml).
 #
@@ -81,24 +81,15 @@ if tmux info >/dev/null 2>&1; then
   tmux display-message "theme: ${theme}" 2>/dev/null || true
 fi
 
-# --- 4) Neovim: flip `background` so the built-in habamax colorscheme repaints
-#        syntax text to match the new terminal. Setting `background` re-applies
-#        the current colorscheme and fires ColorScheme, which our autocmd
-#        (registered in core/options.lua) catches to re-apply transparency +
-#        float/selection bgs. We also apply explicitly in case the value didn't
-#        change (no event). Fresh nvim reads the state file at startup. Note: do
-#        NOT call `:colorscheme default` -- on nvim 0.12 the built-in is
-#        `habamax`, and `vim.o.background` alone re-applies it correctly. ------
+# --- 4) Neovim: call CfgSetTheme() (nvim/lua/lbobc/core/options.lua), which
+#        flips `background` and re-applies the transparency + float/selection
+#        colours. Instances started before CfgSetTheme existed still get the
+#        `background` flip. Fresh nvim reads the state file at startup. ---------
 shopt -s nullglob
-if [ "$theme" = "light" ]; then
-  sel_bg="#eee8d5"; float_bg="#efeadb"
-else
-  sel_bg="#3c3c3c"; float_bg="#252525"
-fi
-local_snippet="vim.g.cfg_theme='${theme}';vim.o.background='${theme}';vim.api.nvim_set_hl(0,'Normal',{bg='none'});vim.api.nvim_set_hl(0,'NormalFloat',{bg='${float_bg}'});vim.api.nvim_set_hl(0,'FloatBorder',{bg='${float_bg}'});vim.api.nvim_set_hl(0,'Visual',{bg='${sel_bg}'});vim.api.nvim_set_hl(0,'PmenuSel',{bg='${sel_bg}'});vim.api.nvim_set_hl(0,'TelescopeSelection',{bg='${sel_bg}'}))"
+nvim_expr="execute('lua if CfgSetTheme then CfgSetTheme(\"${theme}\") else vim.o.background = \"${theme}\" end')"
 for sock in "$RUNTIME_DIR"/nvim.*; do
   [ -S "$sock" ] || continue
-  timeout 2 nvim --server "$sock" --remote-expr "execute('lua ${local_snippet}')" >/dev/null 2>&1 || true
+  timeout 2 nvim --server "$sock" --remote-expr "$nvim_expr" >/dev/null 2>&1 || true
 done
 
 # --- 5) lazygit: repoint the deployed config symlink. Running lazygit keeps its
@@ -112,6 +103,5 @@ ln -sfn "$lg_src" "$LG_DIR/config.yml" 2>/dev/null || true
 echo "Switched to ${theme}."
 echo "  state file:  ${STATE_FILE}"
 echo "  alacritty:   ${ALA_DIR}/base.toml -> $([ "$theme" = light ] && echo base-light.toml || echo base.toml)"
-echo "  nvim sel bg: ${sel_bg}"
 echo "  lazygit:     ${lg_src}"
 echo "  note: start a new shell + restart lazygit for the new palette to fully apply."
