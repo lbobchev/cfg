@@ -3,11 +3,11 @@
 # with the OS-specific bindings file and never goes stale against the theme.
 # The generated top-level alacritty.toml imports this + the OS bindings.
 #
-# Soft neutral-gray dark theme. Replaces the earlier pure black/white (harsh on
-# the eyes) with a near-black background and soft off-white foreground, plus a
-# muted/desaturated 16-color ANSI palette. nvim's default (treesitter) syntax
-# highlighting, fzf, ls, git, and bat all read this ANSI palette, so everything
-# reads calm instead of neon-on-black. No theme plugin / no import — inline only.
+# E-ink night-mode dark theme: a warm charcoal background, paper-toned ink and
+# a muted/desaturated 16-color ANSI palette (every colour except bright black
+# >= 4.5:1 on the bg). nvim's default (treesitter) syntax highlighting, fzf, ls,
+# git, and bat all read this ANSI palette, so everything reads calm instead of
+# neon-on-black. No theme plugin / no import — inline only.
 
 [font]
 normal = { family = "JetBrainsMono Nerd Font", style = "Regular" }
@@ -23,35 +23,36 @@ blink_interval = 300
 [window]
 startup_mode = "Fullscreen"
 opacity = 1.0
+padding = { x = 20, y = 20 }
 
 [colors.primary]
-background = "#1e1e1e"
-foreground = "#d4d4d4"
+background = "#212120"
+foreground = "#cfccc4"
 
 [colors.cursor]
-text = "#1e1e1e"
-cursor = "#d4d4d4"
+text = "#212120"
+cursor = "#cfccc4"
 
 [colors.selection]
-text = "#1e1e1e"
-background = "#6e6e6e"
+text = "CellForeground"
+background = "#45433f"
 
 [colors.normal]
-black   = "#1c1c1c"
-red     = "#bc5653"
-green   = "#909d63"
-yellow  = "#ebc17a"
-blue    = "#7eaac7"
-magenta = "#aa6292"
-cyan    = "#86d3ce"
-white   = "#cacaca"
+black   = "#1c1c1b"
+red     = "#c47a70"
+green   = "#9aa38a"
+yellow  = "#c2b08a"
+blue    = "#93a0b8"
+magenta = "#ad97ad"
+cyan    = "#8fb0ab"
+white   = "#a8a59e"
 
 [colors.bright]
-black   = "#636363"
-red     = "#bc5653"
-green   = "#909d63"
-yellow  = "#ebc17a"
-blue    = "#7eaac7"
-magenta = "#aa6292"
-cyan    = "#86d3ce"
-white   = "#e0e0e0"
+black   = "#7a7873"
+red     = "#d08b80"
+green   = "#a8b198"
+yellow  = "#cdbd98"
+blue    = "#a3afc5"
+magenta = "#bba6bb"
+cyan    = "#9fbdb8"
+white   = "#e6e3dc"

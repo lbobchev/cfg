@@ -1,6 +1,6 @@
 # Shared Alacritty LIGHT base config — the "soft light" pole of the dark<->light
 # cfg theme toggle. Identical to base.toml except for the inline [colors.*]
-# palette: Modus Operandi Tinted (warm paper bg, WCAG AAA contrast) for
+# palette: e-ink grey paper bg, soft ink fg and desaturated ANSI colours, for
 # bright-room / daytime coding.
 # No theme plugin / no import — inline only. bin/theme-toggle.sh swaps the
 # deployed base.toml symlink/copy between this file and base.toml (dark).
@@ -22,42 +22,43 @@ blink_interval = 300
 [window]
 startup_mode = "Fullscreen"
 opacity = 1.0
+padding = { x = 20, y = 20 }
 
-# Modus Operandi Tinted (protesilaos/modus-themes): every colour >= 6.6:1 on the bg
+# E-ink grey paper: ink 11.9:1, every ANSI colour except white >= 4.5:1 on the bg
 [colors.primary]
-background = "#fbf7f0"
-foreground = "#000000"
+background = "#eeebe3"
+foreground = "#2b2b2b"
 
 [colors.cursor]
-text = "#fbf7f0"
-cursor = "#000000"
+text = "#eeebe3"
+cursor = "#2b2b2b"
 
 [colors.selection]
 text = "CellForeground"
-background = "#c2bcb5"
+background = "#c8c4bb"
 
 [colors.normal]
-black   = "#000000"
-red     = "#a60000"
-green   = "#006300"
-yellow  = "#6d5000"
-blue    = "#0031a9"
-magenta = "#721045"
-cyan    = "#00598b"
-white   = "#a6a6a6"
+black   = "#2b2b2b"
+red     = "#8a3a32"
+green   = "#4f5a45"
+yellow  = "#6b5d40"
+blue    = "#44506a"
+magenta = "#5e4a5e"
+cyan    = "#3f5c5c"
+white   = "#8a8a8a"
 
 [colors.bright]
-black   = "#595959"
-red     = "#972500"
-green   = "#00603f"
-yellow  = "#894000"
-blue    = "#3546c2"
-magenta = "#531ab6"
-cyan    = "#005f5f"
-white   = "#ffffff"
+black   = "#6b6b6b"
+red     = "#9a4a40"
+green   = "#5a6650"
+yellow  = "#726345"
+blue    = "#525e78"
+magenta = "#6e5870"
+cyan    = "#4c6a6a"
+white   = "#f7f5f0"
 
 # Claude Code's light-ansi theme draws inline code with xterm colour 153
-# (#afd7ff, 1.4:1 on this bg). Remap it to Neovim's dark cyan.
+# (#afd7ff, 1.4:1 on this bg). Remap it to the palette's dark cyan.
 [[colors.indexed_colors]]
 index = 153
-color = "#007373"
+color = "#3f5c5c"
