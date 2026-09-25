@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # theme-toggle -- cycle the cfg dev stack between the two health-oriented
-# palettes: "dark" (soft neutral-gray; easy in a dim room) and "light"
-# (Modus Operandi Tinted warm paper; easy in a bright room / daytime). Both are
+# palettes: "dark" (e-ink charcoal; easy in a dim room) and "light"
+# (e-ink grey paper; easy in a bright room / daytime). Both are
 # plugin-free / import-free; this script just repoints symlinks and re-applies
 # a few live colours. Bound to Ctrl+Shift+B (alacritty bindings-*.toml).
 #

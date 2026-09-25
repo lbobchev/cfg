@@ -1,27 +1,27 @@
-# Minimal soft-gray theme. Off-white text on the terminal's near-black background
-# (alacritty bg #1e1e1e / fg #d4d4d4); selected/highlighted lines use a dim grey
-# so they stay visible without harsh pure-white contrast.
+# Dark lazygit theme — e-ink charcoal. Paper-toned ink on the terminal's charcoal
+# background (alacritty bg #212120 / fg #cfccc4); the only hue kept is red for
+# unstaged changes. Pairs with alacritty base.toml / tmux .tmux-dark.conf.
 gui:
   theme:
     activeBorderColor:
-      - "#d4d4d4"
+      - "#cfccc4"
       - bold
     inactiveBorderColor:
-      - "#9a9a9a"
+      - "#5c5a55"
     searchingActiveBorderColor:
-      - "#d4d4d4"
+      - "#cfccc4"
       - bold
     optionsTextColor:
-      - "#9a9a9a"
+      - "#8a877f"
     selectedLineBgColor:
-      - "#333333"
+      - "#34332f"
     cherryPickedCommitBgColor:
-      - "#333333"
+      - "#34332f"
     cherryPickedCommitFgColor:
-      - "#d4d4d4"
+      - "#cfccc4"
     unstagedChangesColor:
-      - "#d4d4d4"
+      - "#c47a70"
     defaultFgColor:
-      - "#d4d4d4"
+      - "#cfccc4"
     searchingActiveColor:
-      - "#d4d4d4"
+      - "#8a877f"
