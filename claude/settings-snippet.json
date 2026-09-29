@@ -1,0 +1,16 @@
+{
+  "preferredNotifChannel": "terminal_bell",
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/claude-bell.sh",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}

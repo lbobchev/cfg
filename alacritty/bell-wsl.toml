@@ -1,0 +1,8 @@
+# Terminal bell for Windows 11 + WSL (Alacritty runs as a Windows app): flash
+# the window and play the Windows notification sound, for example when
+# Claude Code finishes. Copied to %APPDATA%\alacritty\bell-wsl.toml by setup.sh.
+[bell]
+animation = "EaseOutExpo"
+duration = 150
+color = "#8a877f"
+command = { program = "powershell.exe", args = ["-NoProfile", "-NonInteractive", "-Command", "(New-Object Media.SoundPlayer 'C:\\Windows\\Media\\Windows Notify System Generic.wav').PlaySync()"] }

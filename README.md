@@ -22,6 +22,7 @@ where the OS differs.
 | `bash/`           | fzf **supplement** (not a full bashrc)                 | —                             |
 | `zsh/`            | Oh My Zsh tracked supplement (sourced from `~/.zshrc`) | —                             |
 | `lazygit/`        | LazyGit config (symlinked)                            | —                             |
+| `claude/`         | Claude Code bell hook + `settings-snippet.json` (merged by `setup.sh`) | see below |
 | `tmux/`           | `tmux.conf`: prefix `Alt+Space`, truecolor, transparent bg, **tmux-resurrect** plugin, OS-aware clipboard | — |
 | `nvim/`           | Neovim config: lazy.nvim, native `vim.lsp`, C#/.NET-first, default colorscheme | [`nvim/README.md`](nvim/README.md), [`nvim/SETUP.md`](nvim/SETUP.md) |
 | `kitty/`          | Legacy/optional terminal (superseded by alacritty)     | —                             |
@@ -53,8 +54,9 @@ What it does (OS-branching only where needed):
 - symlinks Debian-side configs into the repo: `~/.config/nvim`, `~/.tmux.conf`, and a `source` line in `~/.bashrc`
 - wires Alacritty:
   - native Linux → **symlinks** `base.toml` + `bindings-linux.toml` + `themes` into the repo
-  - WSL → **copies** `base.toml` + `bindings-wsl.toml` + theme files to `%APPDATA%\alacritty` (Windows Alacritty can't follow Linux symlinks)
+  - WSL → **copies** `base.toml` + `bindings-wsl.toml` + `bell-wsl.toml` + theme files to `%APPDATA%\alacritty` (Windows Alacritty can't follow Linux symlinks)
 - generates the tiny top-level `alacritty.toml` (imports base + OS bindings; no theme import so Alacritty uses its built-in default colors)
+- symlinks `~/.claude/hooks/claude-bell.sh` and merges `claude/settings-snippet.json` into `~/.claude/settings.json` with `jq` (other keys and hooks stay; skipped when `jq` is missing)
 - bootstraps nvim plugins (`nvim --headless +Lazy!sync`)
 - native Linux only: runs `devsetup/install.sh` (GNOME Dash launchers)
 - prints remaining manual steps (restart Alacritty / `tmux source-file` / pin to Dash)
@@ -67,6 +69,7 @@ three files + a generated entry point (Alacritty `import` merges in order; array
 - `alacritty/base.toml` — shared (cursor, `startup_mode="Fullscreen"`, `opacity=0.85`). **No** `[keyboard]`, **no** theme import — so it never conflicts and never goes stale.
 - `alacritty/bindings-linux.toml` — `[keyboard]` using `bash -lc "…"`.
 - `alacritty/bindings-wsl.toml` — `[keyboard]` using `wsl -d debian -- bash -lc "…"`.
+- `alacritty/bell-wsl.toml` — WSL only: on a terminal bell, flash the window and play the Windows notification sound. To use another sound, change the `.wav` path in its `command` (`Media.SoundPlayer` plays WAV only).
 - the generated `alacritty.toml` — just `[general] import = [base, OS bindings]`. No theme import, so Alacritty runs with its built-in default colors (edit it to add a theme import later).
 
 ## Notable design choices
@@ -74,6 +77,7 @@ three files + a generated entry point (Alacritty `import` merges in order; array
 - **Alacritty** fullscreen + 0.85 opacity, built-in default colors; config-edit hotkeys (`Ctrl+,` / `.` / `/`) open the alacritty/tmux/bash configs in new tmux nvim windows via `bin/open-alacritty-config.sh` (OS-aware).
 - **tmux** uses **tmux-resurrect** (cross-reboot session restore); truecolor passthrough; transparent window bg; clipboard is OS-aware (`clip.exe` on WSL, `xclip` on Linux) via one `if-shell`.
 - **neovim** uses **lazy.nvim** (ex-Packer) and the **native `vim.lsp`** API (no `nvim-lspconfig`), is **C#/.NET-first** (Roslyn + .NET 10 + netcoredbg DAP), and also covers Go / C/C++ / TypeScript + React / Angular / HTML+CSS. Leader: `<Space>`. Adds **telescope-fzf-native** (fzf operators `^ $ ' !` in finders) + `<leader>fS` glob grep — see [`nvim/SEARCH.md`](nvim/SEARCH.md).
+- **Claude Code** rings the terminal bell when it stops and no background agent still runs (a `Stop` hook reads `background_tasks`; background shells do not count), and on permission prompts (`preferredNotifChannel: terminal_bell`). tmux marks the window; on WSL, Alacritty flashes and plays a sound. `bin/theme-toggle.sh` also sets the Claude Code theme to `light-ansi` / `dark-ansi`, because its `auto` detection gets no answer through tmux + ConPTY.
 - **bash** fzf-supplement only (no prompt/aliases/PATH) — kept intentionally minimal; `~/.bashrc` remains the system default plus this `source`.
 
 See [`devsetup/README.md`](devsetup/README.md) for the Dash-launcher details

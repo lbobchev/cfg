@@ -6,9 +6,9 @@
 # a few live colours. Bound to Ctrl+Shift+B (alacritty bindings-*.toml).
 #
 # Touches, in one shot:  the shared state file, Alacritty base config, tmux
-# status, running Neovim instances (selection bg), and the lazygit config
-# symlink. Shells (zsh/bash) need a restart to pick up terminal colours;
-# running lazygit needs a restart too.
+# status, running Neovim instances (selection bg), the lazygit config
+# symlink, and the Claude Code theme. Shells (zsh/bash) need a restart to pick
+# up terminal colours; running lazygit needs a restart too.
 #
 # Shared state:  ~/.config/cfg-theme   ("dark" | "light"; default dark)
 # Portable: auto-detects WSL vs native Linux for the Alacritty config path.
@@ -100,8 +100,22 @@ lg_src="$CFG_DIR/lazygit/config.yml"
 [ "$theme" = "light" ] && lg_src="$CFG_DIR/lazygit/config-light.yml"
 ln -sfn "$lg_src" "$LG_DIR/config.yml" 2>/dev/null || true
 
+# --- 6) Claude Code: pin the matching ANSI theme. Its "auto" theme asks the
+#        terminal for the background colour, and the answer does not come
+#        back through tmux + ConPTY, so it falls back to dark. ----------------
+CC_SETTINGS="$HOME/.claude/settings.json"
+cc_theme="${theme}-ansi"
+if [ -f "$CC_SETTINGS" ] && command -v jq >/dev/null 2>&1; then
+  cc_tmp="$(mktemp)"
+  if jq --arg t "$cc_theme" '.theme = $t' "$CC_SETTINGS" > "$cc_tmp"; then
+    cat "$cc_tmp" > "$CC_SETTINGS"
+  fi
+  rm -f "$cc_tmp"
+fi
+
 echo "Switched to ${theme}."
 echo "  state file:  ${STATE_FILE}"
 echo "  alacritty:   ${ALA_DIR}/base.toml -> $([ "$theme" = light ] && echo base-light.toml || echo base.toml)"
 echo "  lazygit:     ${lg_src}"
+echo "  claude code: ${cc_theme} (restart running sessions)"
 echo "  note: start a new shell + restart lazygit for the new palette to fully apply."
