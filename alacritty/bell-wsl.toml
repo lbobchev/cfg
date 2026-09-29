@@ -5,4 +5,4 @@
 animation = "EaseOutExpo"
 duration = 150
 color = "#8a877f"
-command = { program = "powershell.exe", args = ["-NoProfile", "-NonInteractive", "-Command", "(New-Object Media.SoundPlayer 'C:\\Windows\\Media\\Windows Notify System Generic.wav').PlaySync()"] }
+command = { program = "powershell.exe", args = ["-NoProfile", "-NonInteractive", "-Command", "(New-Object Media.SoundPlayer 'C:\\Windows\\Media\\Windows Proximity Notification.wav').PlaySync()"] }
