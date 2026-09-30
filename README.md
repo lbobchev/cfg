@@ -69,7 +69,7 @@ three files + a generated entry point (Alacritty `import` merges in order; array
 - `alacritty/base.toml` — shared (cursor, `startup_mode="Fullscreen"`, `opacity=0.85`). **No** `[keyboard]`, **no** theme import — so it never conflicts and never goes stale.
 - `alacritty/bindings-linux.toml` — `[keyboard]` using `bash -lc "…"`.
 - `alacritty/bindings-wsl.toml` — `[keyboard]` using `wsl -d debian -- bash -lc "…"`.
-- `alacritty/bell-wsl.toml` — WSL only: on a terminal bell, flash the window and play the Windows notification sound. To use another sound, change the `.wav` path in its `command` (`Media.SoundPlayer` plays WAV only).
+- `alacritty/bell-wsl.toml` — WSL only: on a terminal bell, flash the window and play the Windows notification sound. It plays `%APPDATA%\alacritty\bell.wav` if that file exists, otherwise `Windows Proximity Notification.wav`. For a custom sound, copy a WAV file to that path (`Media.SoundPlayer` plays WAV only). Do not override `bell.command` in another file: Alacritty appends the `args` arrays of imported files, and the merged command fails.
 - the generated `alacritty.toml` — just `[general] import = [base, OS bindings]`. No theme import, so Alacritty runs with its built-in default colors (edit it to add a theme import later).
 
 ## Notable design choices
