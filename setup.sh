@@ -6,8 +6,8 @@
 #   - Windows 11 + WSL Debian Trixie (Alacritty installed as a Windows app).
 #
 # It wires configs (symlinks on Linux, copies for the Windows Alacritty bits),
-# clones tmux plugins, installs the alacritty-config helper,
-# bootstraps nvim plugins, and (on native Linux) installs the GNOME Dash launchers.
+# clones tmux plugins, installs the alacritty-config helper, wires the Claude
+# Code bell hook, bootstraps nvim plugins, and (on native Linux) installs the GNOME Dash launchers.
 #
 # Prerequisites must be installed MANUALLY first (this script does NOT apt-install
 # anything; it checks and fails fast with a clear message if something is missing):
@@ -137,9 +137,10 @@ if [ "$IS_WSL" = 1 ]; then
   [ "$(cat "$STATE_FILE" 2>/dev/null)" = "light" ] && ALA_BASE_SRC="$CFG_DIR/alacritty/base-light.toml"
   cp -f "$ALA_BASE_SRC" "$ALA_DIR/base.toml"
   cp -f "$CFG_DIR/alacritty/bindings-wsl.toml" "$ALA_DIR/bindings-wsl.toml"
+  cp -f "$CFG_DIR/alacritty/bell-wsl.toml" "$ALA_DIR/bell-wsl.toml"
   # only the color-scheme tomls are needed (alacritty-theme ships ~190 preview PNGs)
   cp -f "$CFG_DIR/alacritty/themes/themes/"*.toml "$ALA_DIR/themes/themes/" 2>/dev/null || true
-  info "copied base/bindings + theme files to $ALA_DIR (active: $(basename "$ALA_BASE_SRC"))"
+  info "copied base/bindings/bell + theme files to $ALA_DIR (active: $(basename "$ALA_BASE_SRC"))"
 else
   ALA_DIR="$HOME/.config/alacritty"
   link "$CFG_DIR/alacritty/base-light.toml" "$ALA_DIR/base-light.toml"
@@ -163,6 +164,7 @@ if [ "$IS_WSL" = 1 ]; then
 import = [
   "~\\AppData\\Roaming\\alacritty\\base.toml",
   "~\\AppData\\Roaming\\alacritty\\bindings-wsl.toml",
+  "~\\AppData\\Roaming\\alacritty\\bell-wsl.toml",
 ]
 EOF
 else
@@ -176,6 +178,31 @@ import = [
 EOF
 fi
 info "generated $ALA_TOP"
+
+# --- Claude Code: bell hook (rings when no background agent runs) and the ANSI
+#     theme that matches cfg-theme (bin/theme-toggle.sh keeps it in sync) ------
+CC_SETTINGS="$HOME/.claude/settings.json"
+link "$CFG_DIR/claude/hooks/claude-bell.sh" "$HOME/.claude/hooks/claude-bell.sh"
+if command -v jq >/dev/null 2>&1; then
+  [ -f "$CC_SETTINGS" ] || printf '{}\n' > "$CC_SETTINGS"
+  cc_theme="$(cat "$STATE_FILE" 2>/dev/null || echo dark)-ansi"
+  cc_tmp="$(mktemp)"
+  if jq --arg t "$cc_theme" --slurpfile snip "$CFG_DIR/claude/settings-snippet.json" '
+      $snip[0] as $s
+      | $s.hooks.Stop[0].hooks[0].command as $hook
+      | .theme = $t
+      | .preferredNotifChannel = $s.preferredNotifChannel
+      | .hooks.Stop = ([(.hooks.Stop // [])[] | select(any(.hooks[]?; .command == $hook) | not)] + $s.hooks.Stop)
+    ' "$CC_SETTINGS" > "$cc_tmp"; then
+    cat "$cc_tmp" > "$CC_SETTINGS"
+    info "merged claude/settings-snippet.json into $CC_SETTINGS (theme: $cc_theme)"
+  else
+    info "could not parse $CC_SETTINGS — left it unchanged."
+  fi
+  rm -f "$cc_tmp"
+else
+  info "note: jq not on PATH — skipped merging claude/settings-snippet.json into $CC_SETTINGS."
+fi
 
 # --- nvim plugin bootstrap (lazy.nvim installs plugins + builds fzf-native) ---
 info "bootstrapping nvim plugins (lazy.nvim sync) ..."
